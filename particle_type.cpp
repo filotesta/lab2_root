@@ -2,12 +2,11 @@
 #include <iostream>
 
 explicit ParticleType::ParticleType(char name, double mass, int charge)
-    : name_{&name}
-    , mass_{mass}
-    , charge_{charge}
-{}
+    : name_{&name}, mass_{mass}, charge_{charge}
+{
+}
 
-const char* ParticleType::getName() const
+const char *ParticleType::getName() const
 {
   return name_;
 }

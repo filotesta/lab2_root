@@ -8,9 +8,11 @@ int Particle::nParticleType_ = 0;
 
 int Particle::findParticle(char name)
 {
-  for (auto it : ptrParticleType_) {
+  for (auto it : ptrParticleType_)
+  {
     int index{0};
-    if (*(it->getName()) == name) {
+    if (*(it->getName()) == name)
+    {
       return index;
     }
     ++index;
@@ -18,9 +20,9 @@ int Particle::findParticle(char name)
   return -1;
 }
 Particle::Particle(char name, Impulse impulse = {0, 0, 0})
-    : index_{findParticle(name)}
-    , impulse_{impulse}
-{}
+    : index_{findParticle(name)}, impulse_{impulse}
+{
+}
 
 const int Particle::getIndex()
 {
@@ -30,21 +32,28 @@ const int Particle::getIndex()
 void Particle::addParticleType(char name, double mass, int charge, double width = 0)
 {
   auto result{findParticle(name)};
-  if (result == -1 && nParticleType_ < maxNumParticleType_) {
-    if (width > 0) {
+  if (result == -1 && nParticleType_ < maxNumParticleType_)
+  {
+    if (width > 0)
+    {
       ptrParticleType_[nParticleType_] = &ResonanceType(name, mass, charge, width);
-    } else {
+    }
+    else
+    {
       ptrParticleType_[nParticleType_] = &ParticleType(name, mass, charge);
     }
     ++nParticleType_;
-  } else {
+  }
+  else
+  {
     assert(name == *(ptrParticleType_[result]->getName()));
   }
 }
 
 void Particle::setIndex(int index)
 {
-  if (index <= nParticleType_) {
+  if (index <= nParticleType_)
+  {
     index_ = index;
   };
 }
@@ -52,12 +61,13 @@ void Particle::setIndex(int index)
 void Particle::setIndex(char name)
 {
   auto index = Particle::findParticle(name);
-  if (index <= nParticleType_) {
+  if (index <= nParticleType_)
+  {
     index_ = index;
   };
 }
 
-const Impulse Particle::getImpulse() const
+const Impulse& Particle::getImpulse() const
 {
   return impulse_;
 }
@@ -87,12 +97,10 @@ const double Particle::particleMass() const
 
 const double Particle::particleEnergy() const
 {
-  return std::sqrt(particleMass() * particleMass()
-                   + normImpulse(impulse_) * normImpulse(impulse_));
+  return std::sqrt(std::pow(particleMass(), 2) + std::pow(normImpulse(impulse_), 2));
 }
 
-const double Particle::particleInvMass(const Particle& p) const
+const double Particle::particleInvMass(const Particle &p) const
 {
-  return std::sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2)
-                   - std::pow(normImpulse(sumImpulse(impulse_, p.getImpulse())), 2));
+  return std::sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2) - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
 }
