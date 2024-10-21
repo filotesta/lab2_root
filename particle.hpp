@@ -3,6 +3,7 @@
 
 #include "resonance_type.hpp"
 #include <array>
+#include <cmath>
 struct Impulse
 {
   double px_;
@@ -12,7 +13,7 @@ struct Impulse
 
 inline const double normImpulse(Impulse impulse)
 {
-  return std::sqrt(impulse.px_ * impulse.px_ + impulse.py_ * impulse.py_ + impulse.pz_ * impulse.pz_);
+  return sqrt(impulse.px_ * impulse.px_ + impulse.py_ * impulse.py_ + impulse.pz_ * impulse.pz_);
 }
 
 inline const Impulse& sumVecImpulse(const Impulse &p1, const Impulse &p2)

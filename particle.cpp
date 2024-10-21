@@ -36,11 +36,11 @@ void Particle::addParticleType(char name, double mass, int charge, double width 
   {
     if (width > 0)
     {
-      ptrParticleType_[nParticleType_] = &ResonanceType(name, mass, charge, width);
+      *(ptrParticleType_[nParticleType_]) = ResonanceType{name, mass, charge, width};
     }
     else
     {
-      ptrParticleType_[nParticleType_] = &ParticleType(name, mass, charge);
+      *(ptrParticleType_[nParticleType_]) = ParticleType{name, mass, charge};
     }
     ++nParticleType_;
   }
@@ -97,10 +97,10 @@ const double Particle::particleMass() const
 
 const double Particle::particleEnergy() const
 {
-  return std::sqrt(std::pow(particleMass(), 2) + std::pow(normImpulse(impulse_), 2));
+  return sqrt(std::pow(particleMass(), 2) + std::pow(normImpulse(impulse_), 2));
 }
 
 const double Particle::particleInvMass(const Particle &p) const
 {
-  return std::sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2) - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
+  return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2) - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
 }

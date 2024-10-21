@@ -1,7 +1,7 @@
 #include "particle_type.hpp"
 #include <iostream>
 
-explicit ParticleType::ParticleType(char name, double mass, int charge)
+ParticleType::ParticleType(char name, double mass, int charge)
     : name_{&name}, mass_{mass}, charge_{charge}
 {
 }
