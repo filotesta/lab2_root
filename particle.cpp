@@ -2,12 +2,12 @@
 
 int Particle::nParticleType_ = 0;
 
-int Particle::findParticle(char name)
+const int Particle::findParticle(const char* name)
 {
   for (auto it : ptrParticleType_)
   {
     int index{0};
-    if (*(it->getName()) == name)
+    if (*(it->getName()) == *name)
     {
       return index;
     }
@@ -16,13 +16,13 @@ int Particle::findParticle(char name)
   return -1;
 }
 
-Particle::Particle(const char* name, Impulse impulse)
-    : index_{findParticle(*name)},
+Particle::Particle(const char *name, Impulse impulse)
+    : index_{findParticle(name)},
       impulse_{impulse}
 {
 }
 
-Particle::Particle(const char* name) 
+Particle::Particle(const char *name)
     : Particle::Particle(name, Impulse{0., 0., 0.})
 {
 }
@@ -32,9 +32,9 @@ const int Particle::getIndex()
   return index_;
 }
 
-void Particle::addParticleType(char* name, double mass, int charge, double width = 0)
+void Particle::addParticleType(char *name, double mass, int charge, double width = 0)
 {
-  auto result{findParticle(*name)};
+  auto result{findParticle(name)};
   if (result == -1 && nParticleType_ < maxNumParticleType_)
   {
     if (width > 0)
@@ -61,7 +61,7 @@ void Particle::setIndex(int index)
   };
 }
 
-void Particle::setIndex(char name)
+void Particle::setIndex(const char *name)
 {
   auto index = Particle::findParticle(name);
   if (index <= nParticleType_)

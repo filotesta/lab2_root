@@ -24,16 +24,16 @@ class Particle
   static const int maxNumParticleType_{10};
   static std::array<ParticleType *, maxNumParticleType_> ptrParticleType_;
   static int nParticleType_;
-  Impulse impulse_;
   int index_;
-  static int findParticle(char name);
+  Impulse impulse_;
+  static const int findParticle(const char* name);
 
 public:
   Particle(const char*);
   Particle(const char*, Impulse);
   const int getIndex();
   void setIndex(int);
-  void setIndex(char);
+  void setIndex(const char*);
   const Impulse &getImpulse() const;
   void setImpulse(Impulse);
   static void addParticleType(char*, double, int, double);
