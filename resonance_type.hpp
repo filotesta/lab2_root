@@ -1,7 +1,7 @@
-#ifndef RESONANCE_TYPE.HPP
-#define RESONANCE_TYPE .HPP
-
+#ifndef RESONANCE_TYPE_HPP
+#define RESONANCE_TYPE_HPP
 #include "particle_type.hpp"
+
 class ResonanceType : public ParticleType
 {
   const double width_;

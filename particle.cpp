@@ -1,8 +1,4 @@
 #include "particle.hpp"
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <iostream>
 
 int Particle::nParticleType_ = 0;
 
@@ -19,8 +15,15 @@ int Particle::findParticle(char name)
   }
   return -1;
 }
-Particle::Particle(char name, Impulse impulse = {0, 0, 0})
-    : index_{findParticle(name)}, impulse_{impulse}
+
+Particle::Particle(char name, Impulse impulse)
+    : index_{findParticle(name)},
+      impulse_{impulse}
+{
+}
+
+Particle::Particle(char name) 
+    : Particle::Particle(name, Impulse{0., 0., 0.})
 {
 }
 
@@ -36,11 +39,11 @@ void Particle::addParticleType(char name, double mass, int charge, double width 
   {
     if (width > 0)
     {
-      *(ptrParticleType_[nParticleType_]) = ResonanceType{name, mass, charge, width};
+      ptrParticleType_[nParticleType_] = new ResonanceType{name, mass, charge, width};
     }
     else
     {
-      *(ptrParticleType_[nParticleType_]) = ParticleType{name, mass, charge};
+      ptrParticleType_[nParticleType_] = new ParticleType{name, mass, charge};
     }
     ++nParticleType_;
   }
@@ -67,7 +70,7 @@ void Particle::setIndex(char name)
   };
 }
 
-const Impulse& Particle::getImpulse() const
+const Impulse &Particle::getImpulse() const
 {
   return impulse_;
 }
