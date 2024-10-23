@@ -15,8 +15,8 @@ class ParticleType
 public:
   explicit ParticleType(char, double, int);
   const char *getName() const;
-  const double getMass() const;
-  const int getCharge() const;
+  double getMass() const;
+  int getCharge() const;
   void virtual print() const;
 };
 

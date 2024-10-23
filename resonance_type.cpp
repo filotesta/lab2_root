@@ -7,7 +7,7 @@ ResonanceType::ResonanceType(char name, double mass, int charge, double width)
     , width_{width}
 {}
 
-const double ResonanceType::getWidth() const
+double ResonanceType::getWidth() const
 {
   return width_;
 }

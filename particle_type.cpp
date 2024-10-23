@@ -11,12 +11,12 @@ const char *ParticleType::getName() const
   return name_;
 }
 
-const double ParticleType::getMass() const
+double ParticleType::getMass() const
 {
   return mass_;
 }
 
-const int ParticleType::getCharge() const
+int ParticleType::getCharge() const
 {
   return charge_;
 }

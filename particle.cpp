@@ -22,12 +22,12 @@ Particle::Particle(char name, Impulse impulse)
 {
 }
 
-Particle::Particle(char name) 
+Particle::Particle(char name)
     : Particle::Particle(name, Impulse{0., 0., 0.})
 {
 }
 
-const int Particle::getIndex()
+int Particle::getIndex()
 {
   return index_;
 }
@@ -93,17 +93,17 @@ void Particle::printParticleData()
             << this->impulse_.py_ << ", " << this->impulse_.pz_ << " )\n";
 }
 
-const double Particle::particleMass() const
+double Particle::particleMass() const
 {
   return ptrParticleType_[index_]->getMass();
 };
 
-const double Particle::particleEnergy() const
+double Particle::particleEnergy() const
 {
   return sqrt(std::pow(particleMass(), 2) + std::pow(normImpulse(impulse_), 2));
 }
 
-const double Particle::particleInvMass(const Particle &p) const
+double Particle::particleInvMass(const Particle &p) const
 {
   return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2) - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
 }

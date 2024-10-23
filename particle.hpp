@@ -9,12 +9,12 @@ struct Impulse
   double pz_;
 };
 
-inline const double normImpulse(Impulse impulse)
+inline double normImpulse(Impulse impulse)
 {
   return sqrt(impulse.px_ * impulse.px_ + impulse.py_ * impulse.py_ + impulse.pz_ * impulse.pz_);
 }
 
-inline const Impulse sumVecImpulse(const Impulse &p1, const Impulse &p2)
+inline Impulse sumVecImpulse(const Impulse &p1, const Impulse &p2)
 {
   return Impulse{p1.px_ + p2.px_, p1.py_ + p2.py_, p1.pz_ + p2.pz_};
 }
@@ -24,14 +24,14 @@ class Particle
   static const int maxNumParticleType_{10};
   static std::array<ParticleType *, maxNumParticleType_> ptrParticleType_;
   static int nParticleType_;
-  Impulse impulse_;
   int index_;
+  Impulse impulse_;
   static int findParticle(char name);
 
 public:
   Particle(char);
   Particle(char, Impulse);
-  const int getIndex();
+  int getIndex();
   void setIndex(int);
   void setIndex(char);
   const Impulse &getImpulse() const;
@@ -39,9 +39,9 @@ public:
   static void addParticleType(char, double, int, double);
   static void printParticleTypes();
   void printParticleData();
-  const double particleMass() const;
-  const double particleEnergy() const;
-  const double particleInvMass(const Particle &) const;
+  double particleMass() const;
+  double particleEnergy() const;
+  double particleInvMass(const Particle &) const;
 };
 
 #endif
