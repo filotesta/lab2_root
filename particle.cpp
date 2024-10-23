@@ -16,25 +16,25 @@ int Particle::findParticle(char name)
   return -1;
 }
 
-Particle::Particle(char name, Impulse impulse)
-    : index_{findParticle(name)},
+Particle::Particle(const char* name, Impulse impulse)
+    : index_{findParticle(*name)},
       impulse_{impulse}
 {
 }
 
-Particle::Particle(char name)
+Particle::Particle(const char* name) 
     : Particle::Particle(name, Impulse{0., 0., 0.})
 {
 }
 
-int Particle::getIndex()
+const int Particle::getIndex()
 {
   return index_;
 }
 
-void Particle::addParticleType(char name, double mass, int charge, double width = 0)
+void Particle::addParticleType(char* name, double mass, int charge, double width = 0)
 {
-  auto result{findParticle(name)};
+  auto result{findParticle(*name)};
   if (result == -1 && nParticleType_ < maxNumParticleType_)
   {
     if (width > 0)
@@ -49,7 +49,7 @@ void Particle::addParticleType(char name, double mass, int charge, double width 
   }
   else
   {
-    assert(name == *(ptrParticleType_[result]->getName()));
+    assert(*name == *(ptrParticleType_[result]->getName()));
   }
 }
 
@@ -93,17 +93,17 @@ void Particle::printParticleData()
             << this->impulse_.py_ << ", " << this->impulse_.pz_ << " )\n";
 }
 
-double Particle::particleMass() const
+const double Particle::particleMass() const
 {
   return ptrParticleType_[index_]->getMass();
 };
 
-double Particle::particleEnergy() const
+const double Particle::particleEnergy() const
 {
   return sqrt(std::pow(particleMass(), 2) + std::pow(normImpulse(impulse_), 2));
 }
 
-double Particle::particleInvMass(const Particle &p) const
+const double Particle::particleInvMass(const Particle &p) const
 {
   return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2) - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
 }

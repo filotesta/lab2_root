@@ -2,12 +2,12 @@
 #include "resonance_type.hpp"
 #include <iostream>
 
-ResonanceType::ResonanceType(char name, double mass, int charge, double width)
+ResonanceType::ResonanceType(const char* name, double mass, int charge, double width)
     : ParticleType(name, mass, charge)
     , width_{width}
 {}
 
-double ResonanceType::getWidth() const
+const double ResonanceType::getWidth() const
 {
   return width_;
 }
