@@ -23,6 +23,11 @@ Particle::Particle(const char* name)
     : Particle::Particle(name, Impulse{0., 0., 0.})
 {}
 
+Particle::Particle()
+    : index_{-1}
+    , impulse_{Impulse{0., 0., 0.}}
+{}
+
 int Particle::getIndex()
 {
   return index_;
@@ -95,7 +100,7 @@ double Particle::particleInvMass(const Particle& p) const
 {
   return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2)
               - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
-} 
+}
 
 int Particle::Decay2Body(Particle& dau1, Particle& dau2) const
 {

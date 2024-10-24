@@ -30,8 +30,9 @@ class Particle
   static int findParticle(const char* name);
 
  public:
-  Particle(const char*);
-  Particle(const char*, Impulse);
+  explicit Particle(); 
+  explicit Particle(const char*);
+  explicit Particle(const char*, Impulse);
   int getIndex();
   void setIndex(int);
   void setIndex(const char*);
