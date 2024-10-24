@@ -1,4 +1,4 @@
-#include "TRandom.h"
+// #include "TRandom.h"
 #include "particle.hpp"
 
 Impulse polarToCartesian(double r, double theta, double phi) const
@@ -31,13 +31,26 @@ int main
   int overflow{100};
   double eventInvMass{0};
 
-  TH1F* hParticles    = new TH1F("hParticles", "particle types", 9, -1., 8.);
-  TH1F* hPhi          = new TH1F("hPhi", "angle phi", 1000, -1, 2 * M_PI + 1);
-  TH1F* hTheta        = new TH1F("hTheta", "angle theta", 1000, -1, M_PI + 1);
-  TH1F* hImpulse      = new TH1F("hImpulse", "impulse", 1000, -1, 6);
-  TH1F* hTrasvImpulse = new TH1F("hTrasvImpulse", "trasverse impulse", 1000, -1, 6);
-  TH1F* hEnergy       = new TH1F("hEnergy", "particle energy", 1000, -1, 6);
-  TH1F* hInvMass      = new TH1F("hInvMass", "particle invariant mass", 1000, -1, 3);
+  TH1F* hParticles     = new TH1F("hParticles", "particle types", 9, -1., 8.);
+  TH1F* hPhi           = new TH1F("hPhi", "angle phi", 1000, -1, 2 * M_PI + 1);
+  TH1F* hTheta         = new TH1F("hTheta", "angle theta", 1000, -1, M_PI + 1);
+  TH1F* hImpulse       = new TH1F("hImpulse", "impulse", 1000, -1, 6);
+  TH1F* hTransvImpulse = new TH1F("hTrasvImpulse", "trasverse impulse", 1000, -1, 6);
+  TH1F* hEnergy        = new TH1F("hEnergy", "particle energy", 1000, -1, 6);
+  TH1F* hInvMass1 =
+      new TH1F("hInvMass1", "invariant mass between particles with charges of the same sign",
+               1000, -1, 3);
+  TH1F* hInvMass2 =
+      new TH1F("hInvMass2", "invariant mass between particles with charges of different sign",
+               1000, -1, 3);
+  TH1F* hInvMass3 =
+      new TH1F("hInvMass3", "invariant mass between Pi and K with charges of different sign",
+               1000, -1, 3);
+  TH1F* hInvMass4 =
+      new TH1F("hInvMass4", "invariant mass between Pi and K with charges of the same sign",
+               1000, -1, 3);
+  TH1F* hInvMass5 = new TH1F(
+      "hInvMass5", "invariant mass between particles decadeted from the same K*", 1000, -1, 3);
 
   for (int j{0}; j < N; ++j) {
     for (int i{0}; i < 100; ++i) {
@@ -80,14 +93,24 @@ int main
           ++overflow;
           eventParticles[overflow].setIndex(dau2.getIndex());
           ++overflow;
+          hInvMass5->Fill(dau1.particleInvMass(dau2));
         }
-        //hInvMass->Fill(dau1.particleInvMass(dau2));
       }
       eventParticles[i].setImpulse(polarToCartesian(impulse, theta, phi));
       hTransvImpulse->Fill(
           sqrt(std::pow(impulse, 2) + std::pow(eventParticles[i].getImpulse().px_, 2)));
       hParticles->Fill(eventParticles[i].getImpulse());
       hEnergy->Fill(eventParticles[i].particleEnergy());
+    }
+
+    for (int i{0}; i < n;) {
+      for (int k{1}; k < n; ++k) {
+        if (eventParticles[i].getCharge() * eventParticles[k].getCharge() > 0) {
+          hInvMass1->Fill(eventParticles[i].particleInvMass(eventParticles[k]));
+        } else {
+          hInvMass2->Fill(eventParticles[i].particleInvMass(eventParticles[k]));
+        }
+      }
     }
   }
 }
