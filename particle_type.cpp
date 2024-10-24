@@ -1,5 +1,4 @@
 #include "particle_type.hpp"
-#include <iostream>
 
 ParticleType::ParticleType(const char* name, double mass, int charge)
     : name_{name}
