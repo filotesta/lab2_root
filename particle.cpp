@@ -1,77 +1,64 @@
 #include "particle.hpp"
 
 int Particle::nParticleType_ = 0;
-std::array<ParticleType *, 10> Particle::ptrParticleType_{};
+std::array<ParticleType*, Particle::maxNumParticleType_> Particle::ptrParticleType_{};
 
-const int Particle::findParticle(const char *name)
+int Particle::findParticle(const char* name)
 {
-  for (auto it : ptrParticleType_)
-  {
-    int index{0};
-    if (*(it->getName()) == *name)
-    {
-      return index;
+  for (int it{}; it < nParticleType_;) {
+    if (ptrParticleType_[it]->getName() == name) {
+      return it;
     }
-    ++index;
+    it++;
   }
   return -1;
 }
 
-Particle::Particle(const char *name, Impulse impulse)
-    : index_{findParticle(name)},
-      impulse_{impulse}
-{
-}
+Particle::Particle(const char* name, Impulse impulse)
+    : index_{findParticle(name)}
+    , impulse_{impulse}
+{}
 
-Particle::Particle(const char *name)
+Particle::Particle(const char* name)
     : Particle::Particle(name, Impulse{0., 0., 0.})
-{
-}
+{}
 
 int Particle::getIndex()
 {
   return index_;
 }
 
-void Particle::addParticleType(char *name, double mass, int charge, double width = 0)
+void Particle::addParticleType(char* name, double mass, int charge, double width = 0)
 {
   auto result{findParticle(name)};
-  if (result == -1 && nParticleType_ < maxNumParticleType_)
-  {
-    if (width > 0)
-    {
+  if (result == -1 && nParticleType_ < maxNumParticleType_) {
+    if (width > 0) {
       ptrParticleType_[nParticleType_] = new ResonanceType{name, mass, charge, width};
-    }
-    else
-    {
+    } else {
       ptrParticleType_[nParticleType_] = new ParticleType{name, mass, charge};
     }
     ++nParticleType_;
-  }
-  else
-  {
+  } else {
     assert(*name == *(ptrParticleType_[result]->getName()));
   }
 }
 
 void Particle::setIndex(int index)
 {
-  if (index <= nParticleType_)
-  {
+  if (index <= nParticleType_) {
     index_ = index;
   };
 }
 
-void Particle::setIndex(const char *name)
+void Particle::setIndex(const char* name)
 {
   auto index = Particle::findParticle(name);
-  if (index <= nParticleType_)
-  {
+  if (index <= nParticleType_) {
     index_ = index;
   };
 }
 
-const Impulse &Particle::getImpulse() const
+const Impulse& Particle::getImpulse() const
 {
   return impulse_;
 }
@@ -104,7 +91,8 @@ double Particle::particleEnergy() const
   return sqrt(std::pow(particleMass(), 2) + std::pow(normImpulse(impulse_), 2));
 }
 
-double Particle::particleInvMass(const Particle &p) const
+double Particle::particleInvMass(const Particle& p) const
 {
-  return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2) - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
+  return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2)
+              - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
 }

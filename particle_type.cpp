@@ -1,12 +1,13 @@
 #include "particle_type.hpp"
 #include <iostream>
 
-ParticleType::ParticleType(const char *name, double mass, int charge)
-    : name_{name}, mass_{mass}, charge_{charge}
-{
-}
+ParticleType::ParticleType(const char* name, double mass, int charge)
+    : name_{name}
+    , mass_{mass}
+    , charge_{charge}
+{}
 
-const char *ParticleType::getName() const
+const char* ParticleType::getName() const
 {
   return name_;
 }
@@ -24,4 +25,9 @@ void ParticleType::print() const
 {
   std::cout << "Particle Type\n> Name: " << name_ << "\n> Mass: " << mass_
             << "\n> Charge " << charge_ << "\n";
+}
+
+double ParticleType::getWidth() const
+{
+  return 0;
 }
