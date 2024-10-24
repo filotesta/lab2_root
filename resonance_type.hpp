@@ -8,7 +8,7 @@ class ResonanceType : public ParticleType
 
 public:
   explicit ResonanceType(const char *, double, int, double);
-  const double getWidth() const;
+  double getWidth() const;
   void print() const override;
 };
 

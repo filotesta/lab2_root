@@ -1,8 +1,9 @@
 #include "particle.hpp"
 
 int Particle::nParticleType_ = 0;
+std::array<ParticleType *, 10> Particle::ptrParticleType_{};
 
-const int Particle::findParticle(const char* name)
+const int Particle::findParticle(const char *name)
 {
   for (auto it : ptrParticleType_)
   {
@@ -27,7 +28,7 @@ Particle::Particle(const char *name)
 {
 }
 
-const int Particle::getIndex()
+int Particle::getIndex()
 {
   return index_;
 }
@@ -93,17 +94,17 @@ void Particle::printParticleData()
             << this->impulse_.py_ << ", " << this->impulse_.pz_ << " )\n";
 }
 
-const double Particle::particleMass() const
+double Particle::particleMass() const
 {
   return ptrParticleType_[index_]->getMass();
 };
 
-const double Particle::particleEnergy() const
+double Particle::particleEnergy() const
 {
   return sqrt(std::pow(particleMass(), 2) + std::pow(normImpulse(impulse_), 2));
 }
 
-const double Particle::particleInvMass(const Particle &p) const
+double Particle::particleInvMass(const Particle &p) const
 {
   return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2) - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
 }

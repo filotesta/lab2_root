@@ -1,7 +1,7 @@
 #include "particle_type.hpp"
 #include <iostream>
 
-ParticleType::ParticleType(const char* name, double mass, int charge)
+ParticleType::ParticleType(const char *name, double mass, int charge)
     : name_{name}, mass_{mass}, charge_{charge}
 {
 }
@@ -11,12 +11,11 @@ const char *ParticleType::getName() const
   return name_;
 }
 
-const double ParticleType::getMass() const
+double ParticleType::getMass() const
 {
   return mass_;
 }
-
-const int ParticleType::getCharge() const
+int ParticleType::getCharge() const
 {
   return charge_;
 }

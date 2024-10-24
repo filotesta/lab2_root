@@ -10,10 +10,10 @@ int main()
     ResonanceType Pplus2{"P-", 0.400, -3, 5.45};
     Kplus.print();
     Pplus2.print();
-    /* Impulse impulse{0, 0.34, 0.56};
+    Impulse impulse{0, 0.34, 0.56};
     Particle kkplus{"K+",impulse};
     Particle kkminus{"K-",impulse};
     std::cout<<kkminus.getIndex()<<'\n';    
     kkminus.setIndex(kkplus.getIndex());
-    std::cout<<kkminus.getIndex()<<'\n'; */
+    std::cout<<kkminus.getIndex()<<'\n';
 }
