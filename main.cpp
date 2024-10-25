@@ -1,7 +1,9 @@
+// #include "TROOT.h"
 // #include "TRandom.h"
+// #include "TStyle.h"
 #include "particle.hpp"
 
-Impulse polarToCartesian(double r, double theta, double phi) const
+Impulse polarToCartesian(double r, double theta, double phi) 
 {
   return {r * sin(theta) * cos(phi), r * sin(theta) * sin(phi), r * cos(theta)};
 }
@@ -13,9 +15,9 @@ void setStyle()
   gStyle->SetOptTitle(0);
 }
 
-int main
+int main()
 {
-  setSyle();
+  setStyle();
   Particle::addParticleType("Pi+", 0.13957, 1, 0);
   Particle::addParticleType("Pi-", 0.13957, -1, 0);
   Particle::addParticleType("K+", 0.49367, 1, 0);
