@@ -83,7 +83,7 @@ int generate()
   }
 
   for (int i{3}; i < 6; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -1, 6);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -0.3, 6.5);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -98,7 +98,7 @@ int generate()
   }
 
   for (int i{6}; i < 12; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -1, 3);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -0.3, 6.5);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
