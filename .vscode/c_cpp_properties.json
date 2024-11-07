@@ -1,0 +1,25 @@
+{
+    "configurations": [
+      {
+        "name": "Mac",
+        "includePath": [
+          "${workspaceFolder}/**",
+          "/home/fag1olo23--/root/include"
+        ],
+        "defines": [],
+        "macFrameworkPath": [],
+        "compilerPath": "/usr/bin/clang",
+        "cStandard": "c11",
+        "cppStandard": "c++17",
+        "intelliSenseMode": "macos-clang-arm64",
+        "browse": {
+          "path": [
+            "/home/fag1olo23--/root/include"
+          ],
+          "limitSymbolsToIncludedHeaders": true,
+          "databaseFilename": ""
+        }
+      }
+    ],
+    "version": 4
+  }

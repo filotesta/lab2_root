@@ -33,7 +33,7 @@ int Particle::getIndex()
   return index_;
 }
 
-void Particle::addParticleType(char* name, double mass, int charge, double width = 0)
+void Particle::addParticleType(const char* name, double mass, int charge, double width = 0)
 {
   auto result{findParticle(name)};
   if (result == -1 && nParticleType_ < maxNumParticleType_) {

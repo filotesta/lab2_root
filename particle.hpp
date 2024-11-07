@@ -38,7 +38,7 @@ class Particle
   void setIndex(const char*);
   const Impulse& getImpulse() const;
   void setImpulse(Impulse);
-  static void addParticleType(char*, double, int, double);
+  static void addParticleType(const char*, double, int, double);
   static void printParticleTypes();
   void printParticleData();
   double particleMass() const;
