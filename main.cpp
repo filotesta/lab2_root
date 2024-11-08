@@ -68,7 +68,7 @@ int generate()
   histo[0]->SetLineWidth(1);
 
   for (int i{1}; i < 3; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -1, 2 * M_PI / i + 0.5);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -0.5, 2 * M_PI / i + 0.5);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -197,6 +197,11 @@ int generate()
         }
       }
     }
+  }
+
+  
+  for (int i{7}; i < 11; ++i) {
+    histo[i]->Sumw2();
   }
 
   TCanvas* canvas1 = new TCanvas(
