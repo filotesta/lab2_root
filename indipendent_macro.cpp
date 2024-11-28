@@ -87,27 +87,24 @@ void CheckHistogram()
   //           << impulseExpFit->GetChisquare() / impulseExpFit->GetNDF();
   // std::cout << "Fit probability = " << impulseExpFit->GetProb() << "\n";
 
-  TH1F* hSubtraction1 = new TH1F(
-      "hS1", "Invariant Mass: subtraction between opposite and same charge", 1000, -0.3, 6.5);
-  hSubtraction1->Add(hInvMassOppositeCharge, hInvMassSameCharge, 1, -1);
+  TH1F* hSubtraction1 = new TH1F("hS1", "Invariant Mass: subtraction between opposite and same charge", 200, -0.3, 6.5);
+  hSubtraction1->Add(hInvMassOppositeCharge, hInvMassSameCharge, 1., -1.);
 
-  TH1F* hSubtraction2 =
-      new TH1F("hS2", "Invariant Mass: subtraction between Pi and K", 1000, -0.3, 6.5);
-  hSubtraction2->Add(hInvMassPiKOppositeCharge, hInvMassPiKSameCharge, 1, -1);
+  TH1F* hSubtraction2 = new TH1F("hS2", "Invariant Mass: subtraction between Pi and K", 200, -0.3, 6.5);
+  hSubtraction2->Add(hInvMassPiKOppositeCharge, hInvMassPiKSameCharge, 1., -1.);
 
   // disegno per comparare i picchi
-  TCanvas* pickComparison = new TCanvas("pickComparison", "Invariant Mass Analisys", 800, 600);
-  pickComparison->Divide(1, 3);
-  pickComparison->cd(1);
+  TCanvas* showComparison = new TCanvas("showComparison", "Invariant Mass Analisys", 800, 600);
+  showComparison->Divide(1, 3);
+  showComparison->cd(1);
   hInvMassKStar->Draw();
 
   TF1* fitGauss1 = new TF1("fitGauss1", "gaus", hSubtraction1->GetXaxis()->GetXmin(),
                            hSubtraction1->GetXaxis()->GetXmax());
-
   fitGauss1->SetParameter(1, hInvMassKStar->GetMean());
   fitGauss1->SetParameter(2, hInvMassKStar->GetRMS());
-  hSubtraction1->Fit("fitGauss1");
-  pickComparison->cd(2);
+  hSubtraction1->Fit(fitGauss1);
+  showComparison->cd(2);
   hSubtraction1->Draw();
   std::cout << "\n Fit hSubtraction1: \n" << "Mean: " << fitGauss1->GetParameter(1) << "\n";
   std::cout << "Sigma: " << fitGauss1->GetParameter(2) << "\n";
@@ -119,11 +116,10 @@ void CheckHistogram()
 
   TF1* fitGauss2 = new TF1("fitGauss2", "gaus", hSubtraction2->GetXaxis()->GetXmin(),
                            hSubtraction2->GetXaxis()->GetXmax());
-
   fitGauss2->SetParameter(1, hInvMassKStar->GetMean());
   fitGauss2->SetParameter(2, hInvMassKStar->GetRMS());
-  hSubtraction2->Fit("fitGauss2");
-  pickComparison->cd(3);
+  hSubtraction2->Fit(fitGauss2);
+  showComparison->cd(3);
   hSubtraction2->Draw();
   std::cout << "\n Fit hSubtraction2: \n" << "Mean: " << fitGauss2->GetParameter(1) << "\n";
   std::cout << "Sigma: " << fitGauss2->GetParameter(2) << "\n";
@@ -138,6 +134,6 @@ void CheckHistogram()
   hSubtraction1->Write();
   file2->Close();
 
-  pickComparison->Print("CheckHistogram.pdf");
+  showComparison->Print("CheckHistogram.pdf");
   // hSubtraction2->Draw("SAME");
 }

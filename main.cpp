@@ -49,7 +49,7 @@ int generate()
                         "Particle Energy",
                         "Invariant Mass: all particles",
                         "Invariant Mass: particles with same charges",
-                        "Invariant Mass: particles with different charges",
+                        "Invariant Mass: particles with opposite charges",
                         "Invariant Mass: Pi+/K+ or Pi-/K-",
                         "Invariant Mass: Pi-/K+ or Pi+/K-",
                         "Invariant mass: decayment particles"};
@@ -68,7 +68,7 @@ int generate()
   histo[0]->SetLineWidth(1);
 
   for (int i{1}; i < 3; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -0.5, 2 * M_PI / i + 0.5);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, -0.5, 2 * M_PI / i + 0.5);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -83,7 +83,7 @@ int generate()
   }
 
   for (int i{3}; i < 6; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -0.3, 6.5);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, -0.3, 6.5);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -97,8 +97,8 @@ int generate()
     histo[i]->SetLineWidth(1);
   }
 
-  for (int i{6}; i < 12; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1000, -0.3, 6.5);
+  for (int i{6}; i < 11; ++i) {
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, -0.3, 6.5);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -111,6 +111,20 @@ int generate()
     histo[i]->SetMarkerStyle(7);
     histo[i]->SetLineWidth(1);
   }
+
+    histo[11] = new TH1F(TString("h11"), hTitle[11], 200, 0., 2.);
+    histo[11]->GetYaxis()->SetTitleOffset(1.);
+    histo[11]->GetXaxis()->SetTitleSize(0.05);
+    histo[11]->GetXaxis()->CenterTitle(true);
+    histo[11]->GetYaxis()->CenterTitle(true);
+    histo[11]->GetYaxis()->SetTitleSize(0.05);
+    histo[11]->GetXaxis()->SetTitle(hTitle[11]);
+    histo[11]->GetYaxis()->SetTitle("Entries");
+    histo[11]->SetLineColor(kBlue);
+    histo[11]->SetMarkerColor(kBlue);
+    histo[11]->SetMarkerStyle(7);
+    histo[11]->SetLineWidth(1);
+
 
   for (int j{0}; j < nEvents; ++j) {
     overflow = 100;
