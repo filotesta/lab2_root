@@ -22,17 +22,11 @@ inline Impulse sumVecImpulse(const Impulse& p1, const Impulse& p2)
 
 class Particle
 {
-  static const int maxNumParticleType_{10};
-  static std::array<ParticleType*, maxNumParticleType_> ptrParticleType_;
-  static int nParticleType_;
-  int index_;
-  Impulse impulse_;
-  static int findParticle(const char* name);
-
  public:
-  explicit Particle(); 
+  explicit Particle();
   explicit Particle(const char*);
   explicit Particle(const char*, Impulse);
+  static const int maxNumParticleType_{10};
   int getIndex();
   void setIndex(int);
   void setIndex(const char*);
@@ -44,9 +38,17 @@ class Particle
   double particleMass() const;
   double particleEnergy() const;
   double particleInvMass(const Particle&) const;
+  int getCharge() const;
 
   int Decay2Body(Particle&, Particle&) const;
   void Boost(double bx, double by, double bz);
+
+ private:
+  static std::array<ParticleType*, maxNumParticleType_> ptrParticleType_;
+  static int nParticleType_;
+  int index_;
+  Impulse impulse_;
+  static int findParticle(const char* name);
 };
 
 #endif

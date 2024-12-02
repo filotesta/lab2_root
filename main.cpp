@@ -54,7 +54,7 @@ int generate()
                         "Invariant Mass: Pi-/K+ or Pi+/K-",
                         "Invariant mass: decayment particles"};
   TH1F* histo[12];
-  histo[0] = new TH1F(TString("h0"), hTitle[0], 8, -0.5, 7.5);
+  histo[0] = new TH1F(TString("h0"), hTitle[0], 8, 0., 7.);
   histo[0]->GetYaxis()->SetTitleOffset(1.);
   histo[0]->GetXaxis()->SetTitleSize(0.05);
   histo[0]->GetXaxis()->CenterTitle(true);
@@ -68,7 +68,7 @@ int generate()
   histo[0]->SetLineWidth(1);
 
   for (int i{1}; i < 3; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, -0.5, 2 * M_PI / i + 0.5);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, 0., 2 * M_PI / i);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -83,7 +83,7 @@ int generate()
   }
 
   for (int i{3}; i < 6; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, -0.3, 6.5);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, 0., 6.5);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -98,7 +98,7 @@ int generate()
   }
 
   for (int i{6}; i < 11; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 200, -0.3, 6.5);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 3000, 0., 6.0);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -112,19 +112,18 @@ int generate()
     histo[i]->SetLineWidth(1);
   }
 
-    histo[11] = new TH1F(TString("h11"), hTitle[11], 200, 0., 2.);
-    histo[11]->GetYaxis()->SetTitleOffset(1.);
-    histo[11]->GetXaxis()->SetTitleSize(0.05);
-    histo[11]->GetXaxis()->CenterTitle(true);
-    histo[11]->GetYaxis()->CenterTitle(true);
-    histo[11]->GetYaxis()->SetTitleSize(0.05);
-    histo[11]->GetXaxis()->SetTitle(hTitle[11]);
-    histo[11]->GetYaxis()->SetTitle("Entries");
-    histo[11]->SetLineColor(kBlue);
-    histo[11]->SetMarkerColor(kBlue);
-    histo[11]->SetMarkerStyle(7);
-    histo[11]->SetLineWidth(1);
-
+  histo[11] = new TH1F(TString("h11"), hTitle[11], 300, 0., 2.);
+  histo[11]->GetYaxis()->SetTitleOffset(1.);
+  histo[11]->GetXaxis()->SetTitleSize(0.05);
+  histo[11]->GetXaxis()->CenterTitle(true);
+  histo[11]->GetYaxis()->CenterTitle(true);
+  histo[11]->GetYaxis()->SetTitleSize(0.05);
+  histo[11]->GetXaxis()->SetTitle(hTitle[11]);
+  histo[11]->GetYaxis()->SetTitle("Entries");
+  histo[11]->SetLineColor(kBlue);
+  histo[11]->SetMarkerColor(kBlue);
+  histo[11]->SetMarkerStyle(7);
+  histo[11]->SetLineWidth(1);
 
   for (int j{0}; j < nEvents; ++j) {
     overflow = 100;
@@ -151,19 +150,17 @@ int generate()
         eventParticles[i].setIndex("P-");
       else {
         eventParticles[i].setIndex("K*");
-        auto y = gRandom->Uniform(0, 1);
         Particle dau1{};
         Particle dau2{};
-        if (0. <= y && y < 0.5) {
+        if (x < 0.995) {
           dau1.setIndex("Pi+");
           dau2.setIndex("K-");
         } else {
           dau1.setIndex("Pi-");
           dau2.setIndex("K+");
         }
-        if (eventParticles[i].Decay2Body(dau1, dau2) != 0) {
-          break;
-        } else {
+
+        if (eventParticles[i].Decay2Body(dau1, dau2) == 0) {
           eventParticles[overflow].setIndex(dau1.getIndex());
           ++overflow;
           eventParticles[overflow].setIndex(dau2.getIndex());
@@ -180,18 +177,19 @@ int generate()
 
     for (int k{0}; k < overflow - 1; ++k) {
       for (int r{k + 1}; r < overflow; ++r) {
-        histo[6]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
+        if (eventParticles[k].getIndex() != 6 && eventParticles[r].getIndex() != 6) {
+          histo[6]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
+        }
       }
-    }
+    } // massa invariante fra tutte le particelle
 
     for (int k{0}; k < overflow - 1; ++k) {
-      if (eventParticles[k].getIndex() != 6) {
-        for (int r{k + 1}; r < overflow; ++r) {
-          if (eventParticles[r].getIndex() != 6) {
-            if ((eventParticles[k].getIndex() + eventParticles[r].getIndex()) % 2 == 0)
-              histo[7]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
+      for (int r{k + 1}; r < overflow; ++r) {
+        if (eventParticles[k].getIndex() != 6 && eventParticles[r].getIndex() != 6) {
+          if (eventParticles[k].getCharge() * eventParticles[r].getCharge() == 1) { // carica concorde
+            histo[7]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
           } else {
-            assert((eventParticles[k].getIndex() + eventParticles[r].getIndex()) % 2 == 1);
+            assert((eventParticles[k].getCharge() * eventParticles[r].getCharge()) == -1); // carica discorde
             histo[8]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
           }
         }
@@ -201,19 +199,18 @@ int generate()
     for (int k{0}; k < overflow - 1; ++k) {
       for (int r{k + 1}; r < overflow; ++r) {
         if ((eventParticles[k].getIndex() + eventParticles[r].getIndex()) == 3) {
-          histo[9]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
+          histo[10]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
         } else if ((eventParticles[k].getIndex() < 4 && eventParticles[r].getIndex() < 4)
                    && eventParticles[k].getIndex() != eventParticles[r].getIndex()
-                   && (((eventParticles[k].getIndex() + eventParticles[r].getIndex() == 2))
-                       || ((eventParticles[k].getIndex() + eventParticles[r].getIndex()
-                            == 4)))) {
-          histo[10]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
+                   && ((eventParticles[k].getIndex() + eventParticles[r].getIndex() == 2)
+                       || (eventParticles[k].getIndex() + eventParticles[r].getIndex()
+                           == 4))) {
+          histo[9]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
         }
       }
     }
   }
 
-  
   for (int i{7}; i < 11; ++i) {
     histo[i]->Sumw2();
   }

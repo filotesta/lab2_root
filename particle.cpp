@@ -9,7 +9,7 @@ int Particle::findParticle(const char* name)
     if (ptrParticleType_[it]->getName() == name) {
       return it;
     }
-    it++;
+    ++it;
   }
   return -1;
 }
@@ -102,6 +102,15 @@ double Particle::particleInvMass(const Particle& p) const
               - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
 }
 
+int Particle::getCharge() const
+{
+  if (index_ > -1) {
+    return ptrParticleType_[index_]->getCharge();
+  } else {
+    return 0;
+  }
+}
+
 int Particle::Decay2Body(Particle& dau1, Particle& dau2) const
 {
   if (particleMass() == 0.0) {
@@ -128,8 +137,8 @@ int Particle::Decay2Body(Particle& dau1, Particle& dau2) const
     w  = sqrt((-2.0 * log(w)) / w);
     y1 = x1 * w;
 
-    massMot += ptrParticleType_[index_]->getWidth()
-             * y1; // metodo getWidth anche in Partycle_type?
+    massMot +=
+        ptrParticleType_[index_]->getWidth() * y1; // metodo getWidth anche in Partycle_type?
   }
 
   if (massMot < massDau1 + massDau2) {
@@ -137,10 +146,9 @@ int Particle::Decay2Body(Particle& dau1, Particle& dau2) const
     return 2;
   }
 
-  double pout =
-      sqrt((massMot * massMot - (massDau1 + massDau2) * (massDau1 + massDau2))
-           * (massMot * massMot - (massDau1 - massDau2) * (massDau1 - massDau2)))
-      / massMot * 0.5;
+  double pout = sqrt((massMot * massMot - (massDau1 + massDau2) * (massDau1 + massDau2))
+                     * (massMot * massMot - (massDau1 - massDau2) * (massDau1 - massDau2)))
+              / massMot * 0.5;
 
   double norm = 2 * M_PI / RAND_MAX;
 

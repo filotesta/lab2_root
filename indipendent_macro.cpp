@@ -4,7 +4,7 @@
 #include <TH1.h>
 #include <iostream>
 
-void CheckHistogram()
+void analysis()
 {
   TFile* file = TFile::Open("particle_simulation.root", "READ");
 
@@ -37,7 +37,7 @@ void CheckHistogram()
   TF1* phiUniformFit = new TF1("phiUniformFit", "[0]", hPhi->GetXaxis()->GetXmin(),
                                hPhi->GetXaxis()->GetXmax());
   hPhi->Fit("phiUniformFit");
-  std::cout << "\n> Fit hPhi:\n> Parameter: " << phiUniformFit->GetParameter(0)
+  std::cout << "\n-------Fit hPhi-------\n> Parameter: " << phiUniformFit->GetParameter(0)
             << "\n> Expected Value: "
             << nEntrieshPhi * (hPhi->GetXaxis()->GetXmax() - hPhi->GetXaxis()->GetXmin())
                    / (hPhi->GetNbinsX() * ((2 * M_PI)))
@@ -47,14 +47,14 @@ void CheckHistogram()
                               * (hPhi->GetXaxis()->GetXmax() - hPhi->GetXaxis()->GetXmin())
                               / (hPhi->GetNbinsX() * ((2 * M_PI))))
             << "\n\n";
-  // std::cout << "> Reduced Chisquare: "
-  //           << phiUniformFit->GetChisquare() / phiUniformFit->GetNDF();
-  // std::cout << "\n> Fit Probability: " << phiUniformFit->GetProb() << "\n";
+  std::cout << "> Reduced Chisquare: "
+            << phiUniformFit->GetChisquare() / phiUniformFit->GetNDF();
+  std::cout << "\n> Fit Probability: " << phiUniformFit->GetProb() << "\n";
 
   TF1* thetaUniformFit = new TF1("thetaUniformFit", "[0]", hTheta->GetXaxis()->GetXmin(),
-                               hTheta->GetXaxis()->GetXmax());
-  hTheta->Fit("thetaUniformFit");
-  std::cout << "\n> Fit hTheta:\n> Parameter: " << thetaUniformFit->GetParameter(0)
+                                 hTheta->GetXaxis()->GetXmax());
+  hTheta->Fit("thetaUniformFit", "R");
+  std::cout << "\n-------Fit hTheta-------\n> Parameter: " << thetaUniformFit->GetParameter(0)
             << "\n> Expected Value: "
             << nEntrieshTheta * (hTheta->GetXaxis()->GetXmax() - hTheta->GetXaxis()->GetXmin())
                    / (hTheta->GetNbinsX() * ((M_PI)))
@@ -63,17 +63,17 @@ void CheckHistogram()
                         - nEntrieshTheta
                               * (hTheta->GetXaxis()->GetXmax() - hTheta->GetXaxis()->GetXmin())
                               / (hTheta->GetNbinsX() * ((M_PI))))
-            << "\n\n";
-  // std::cout << "> Reduced Chisquare: "
-  //           << thetaUniformFit->GetChisquare() / thetaUniformFit->GetNDF();
-  // std::cout << "\n> Fit Probability: " << thetaUniformFit->GetProb() << "\n";
+            << "\n";
+  std::cout << "> Reduced Chisquare: "
+            << thetaUniformFit->GetChisquare() / thetaUniformFit->GetNDF();
+  std::cout << "\n> Fit Probability: " << thetaUniformFit->GetProb() << "\n\n";
 
-  TF1* impulseExpFit =
-      new TF1("impulseExpFit", "expo", hImpulse->GetXaxis()->GetXmin(),
-              hImpulse->GetXaxis()->GetXmax());
-  hImpulse->Fit("impulseExpFit");
-  std::cout << "\n> Fit hImpulse: \n"
-            << "> Mean: " << hImpulse->GetMean() << " +/- " << hImpulse->GetMeanError() << "\n";
+  TF1* impulseExpFit = new TF1("impulseExpFit", "expo", hImpulse->GetXaxis()->GetXmin(),
+                               hImpulse->GetXaxis()->GetXmax());
+  hImpulse->Fit("impulseExpFit", "R");
+  std::cout << "\n-------Fit hImpulse------- \n"
+            << "> Mean: " << hImpulse->GetMean() << " +/- " << hImpulse->GetMeanError()
+            << "\n";
   const double meanDiff = std::abs(hImpulse->GetMean() - 1);
   if (meanDiff <= hImpulse->GetMeanError()) {
     std::cout << "> Mean is COMPATIBLE with 1, with a difference of: " << meanDiff << "\n";
@@ -82,51 +82,59 @@ void CheckHistogram()
   }
 
   std::cout << "> Parameter constant: " << impulseExpFit->GetParameter(0) << "\n"
-            << "> Parameter slope: " << impulseExpFit->GetParameter(1) << "\n\n";
-  // std::cout << "Reduced Chisquare: "
-  //           << impulseExpFit->GetChisquare() / impulseExpFit->GetNDF();
-  // std::cout << "Fit probability = " << impulseExpFit->GetProb() << "\n";
+            << "> Parameter slope: " << impulseExpFit->GetParameter(1) << "\n";
+  std::cout << "> Reduced Chisquare: "
+            << impulseExpFit->GetChisquare() / impulseExpFit->GetNDF() << "\n";
+  std::cout << "> Fit probability: " << impulseExpFit->GetProb() << "\n\n";
+  
+  hImpulse->Draw();
 
-  TH1F* hSubtraction1 = new TH1F("hS1", "Invariant Mass: subtraction between opposite and same charge", 200, -0.3, 6.5);
+
+  TH1F* hSubtraction1 = new TH1F(
+      "hS1", "Invariant Mass: subtraction between opposite and same charge", 3000, 0., 6.);
   hSubtraction1->Add(hInvMassOppositeCharge, hInvMassSameCharge, 1., -1.);
 
-  TH1F* hSubtraction2 = new TH1F("hS2", "Invariant Mass: subtraction between Pi and K", 200, -0.3, 6.5);
-  hSubtraction2->Add(hInvMassPiKOppositeCharge, hInvMassPiKSameCharge, 1., -1.);
+  TH1F* hSubtraction2 =
+      new TH1F("hS2", "Invariant Mass: subtraction between Pi and K", 3000, 0., 6.);
+  hSubtraction2->Add(hInvMassPiKOppositeCharge, hInvMassPiKSameCharge, 1.,-1.);
 
   // disegno per comparare i picchi
-  TCanvas* showComparison = new TCanvas("showComparison", "Invariant Mass Analisys", 800, 600);
-  showComparison->Divide(1, 3);
-  showComparison->cd(1);
+  TCanvas* canvasKStar =
+      new TCanvas("canvasKStar", "Invariant mass: decayment particles", 800, 600);
   hInvMassKStar->Draw();
+
+  TCanvas* hS1 = new TCanvas(
+      "hS1", "Invariant Mass: subtraction between opposite and same charge", 800, 600);
 
   TF1* fitGauss1 = new TF1("fitGauss1", "gaus", hSubtraction1->GetXaxis()->GetXmin(),
                            hSubtraction1->GetXaxis()->GetXmax());
   fitGauss1->SetParameter(1, hInvMassKStar->GetMean());
   fitGauss1->SetParameter(2, hInvMassKStar->GetRMS());
-  hSubtraction1->Fit(fitGauss1);
-  showComparison->cd(2);
+  hSubtraction1->Fit(fitGauss1, "R");
+  hSubtraction1->GetXaxis()->SetRangeUser(0.2, 1.2);
   hSubtraction1->Draw();
-  std::cout << "\n Fit hSubtraction1: \n" << "Mean: " << fitGauss1->GetParameter(1) << "\n";
+  std::cout << "\n-------Fit hSubtraction1------- \n"
+            << "Mean: " << fitGauss1->GetParameter(1) << "\n";
   std::cout << "Sigma: " << fitGauss1->GetParameter(2) << "\n";
   std::cout << "Recudced Chisquare: " << fitGauss1->GetChisquare() / fitGauss1->GetNDF()
             << "\n";
   std::cout << "Fit probability = " << fitGauss1->GetProb() << "\n";
 
-  // hSubtraction1->Draw("SAME");
+  TCanvas* hS2 = new TCanvas("hS2", "Invariant Mass: subtraction between Pi and K", 800, 600);
 
   TF1* fitGauss2 = new TF1("fitGauss2", "gaus", hSubtraction2->GetXaxis()->GetXmin(),
                            hSubtraction2->GetXaxis()->GetXmax());
   fitGauss2->SetParameter(1, hInvMassKStar->GetMean());
   fitGauss2->SetParameter(2, hInvMassKStar->GetRMS());
-  hSubtraction2->Fit(fitGauss2);
-  showComparison->cd(3);
+  hSubtraction2->Fit(fitGauss2, "R");
+  hSubtraction2->GetXaxis()->SetRangeUser(0.2, 1.2);
   hSubtraction2->Draw();
-  std::cout << "\n Fit hSubtraction2: \n" << "Mean: " << fitGauss2->GetParameter(1) << "\n";
+  std::cout << "\n-------Fit hSubtraction2------- \n"
+            << "Mean: " << fitGauss2->GetParameter(1) << "\n";
   std::cout << "Sigma: " << fitGauss2->GetParameter(2) << "\n";
   std::cout << "Recudced Chisquare: " << fitGauss2->GetChisquare() / fitGauss2->GetNDF()
             << "\n";
   std::cout << "Fit probability = " << fitGauss2->GetProb() << "\n";
-
 
   TFile* file2 = new TFile("particle_checking.root", "RECREATE");
   hInvMassKStar->Write();
@@ -134,6 +142,7 @@ void CheckHistogram()
   hSubtraction1->Write();
   file2->Close();
 
-  showComparison->Print("CheckHistogram.pdf");
-  // hSubtraction2->Draw("SAME");
+  canvasKStar->Print("gaussian_K*.pdf");
+  hS1->Print("histogram_sub_1.pdf");
+  hS2->Print("histogram_sub_2.pdf");
 }
