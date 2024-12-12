@@ -1,13 +1,17 @@
-#include <TCanvas.h>
-#include <TF1.h>
-#include <TFile.h>
-#include <TH1.h>
+#include "TCanvas.h"
+#include "TF1.h"
+#include "TFile.h"
+#include "TH1F.h"
+#include "TLegend.h"
+#include "TROOT.h"
+#include "TRandom.h"
+#include "TStyle.h"
+#include "particle.hpp"
 #include <iostream>
 
 void analysis()
 {
-  TFile* file = TFile::Open("particle_simulation.root", "READ");
-
+  TFile* file                     = TFile::Open("particle_simulation.root", "READ");
   TH1F* hParticles                = (TH1F*)file->Get(TString("h0"));
   TH1F* hPhi                      = (TH1F*)file->Get(TString("h1"));
   TH1F* hTheta                    = (TH1F*)file->Get(TString("h2"));
@@ -21,24 +25,21 @@ void analysis()
   TH1F* hInvMassPiKOppositeCharge = (TH1F*)file->Get(TString("h10"));
   TH1F* hInvMassKStar             = (TH1F*)file->Get(TString("h11"));
 
-  const double nEntrieshParticle       = hParticles->GetEntries();
-  const double nEntrieshPhi            = hPhi->GetEntries();
-  const double nEntrieshTheta          = hTheta->GetEntries();
-  const double nEntrieshImpulse        = hImpulse->GetEntries();
-  const double nEntrieshTransvImpulsee = hTransvImpulse->GetEntries();
-  const double nEntrieshEnergy         = hEnergy->GetEntries();
-  const double nEntrieshInvMass        = hInvMass->GetEntries();
+  const double nEntrieshParticle = hParticles->GetEntries();
+  const double nEntrieshPhi      = hPhi->GetEntries();
+  const double nEntrieshTheta    = hTheta->GetEntries();
 
-  for (int bin = 1; bin < hParticles->GetNbinsX(); ++bin) {
-    double content = hParticles->GetBinContent(bin);
-    double error   = hParticles->GetBinError(bin);
-  }
+  TCanvas* canvasPhi = new TCanvas("canvasPhi", "Fitting angle phi", 1000, 1000, 800, 600);
+
+  gStyle->SetOptFit(1111);
 
   TF1* phiUniformFit = new TF1("phiUniformFit", "[0]", hPhi->GetXaxis()->GetXmin(),
                                hPhi->GetXaxis()->GetXmax());
+  std::cout << "\n------------------------------------------------------------------------\n";
   hPhi->Fit("phiUniformFit");
-  std::cout << "\n-------Fit hPhi-------\n> Parameter: " << phiUniformFit->GetParameter(0)
-            << "\n> Expected Value: "
+  hPhi->Draw();
+  std::cout << "\n                        Fit hPhi                        \n> Parameter: "
+            << phiUniformFit->GetParameter(0) << "\n> Expected Value: "
             << nEntrieshPhi * (hPhi->GetXaxis()->GetXmax() - hPhi->GetXaxis()->GetXmin())
                    / (hPhi->GetNbinsX() * ((2 * M_PI)))
             << "\n> Parameter - Expected value: "
@@ -50,12 +51,16 @@ void analysis()
   std::cout << "> Reduced Chisquare: "
             << phiUniformFit->GetChisquare() / phiUniformFit->GetNDF();
   std::cout << "\n> Fit Probability: " << phiUniformFit->GetProb() << "\n";
+  std::cout << "\n------------------------------------------------------------------------\n";
 
+  TCanvas* canvasTheta =
+      new TCanvas("canvasTheta", "Fitting angle theta", 1000, 1000, 800, 600);
   TF1* thetaUniformFit = new TF1("thetaUniformFit", "[0]", hTheta->GetXaxis()->GetXmin(),
                                  hTheta->GetXaxis()->GetXmax());
   hTheta->Fit("thetaUniformFit", "R");
-  std::cout << "\n-------Fit hTheta-------\n> Parameter: " << thetaUniformFit->GetParameter(0)
-            << "\n> Expected Value: "
+  hTheta->Draw();
+  std::cout << "\n                        Fit hTheta                        \n> Parameter: "
+            << thetaUniformFit->GetParameter(0) << "\n> Expected Value: "
             << nEntrieshTheta * (hTheta->GetXaxis()->GetXmax() - hTheta->GetXaxis()->GetXmin())
                    / (hTheta->GetNbinsX() * ((M_PI)))
             << "\n> Parameter - Expected value: "
@@ -66,12 +71,15 @@ void analysis()
             << "\n";
   std::cout << "> Reduced Chisquare: "
             << thetaUniformFit->GetChisquare() / thetaUniformFit->GetNDF();
-  std::cout << "\n> Fit Probability: " << thetaUniformFit->GetProb() << "\n\n";
+  std::cout << "\n> Fit Probability: " << thetaUniformFit->GetProb() << "\n";
+  std::cout << "\n------------------------------------------------------------------------\n";
 
+  TCanvas* canvasImpulse = new TCanvas("canvasImpulse", "Fitting impulse", 1000, 1000, 800, 600);
   TF1* impulseExpFit = new TF1("impulseExpFit", "expo", hImpulse->GetXaxis()->GetXmin(),
                                hImpulse->GetXaxis()->GetXmax());
   hImpulse->Fit("impulseExpFit", "R");
-  std::cout << "\n-------Fit hImpulse------- \n"
+  hImpulse->Draw();
+  std::cout << "\n                        Fit hImpulse                        \n"
             << "> Mean: " << hImpulse->GetMean() << " +/- " << hImpulse->GetMeanError()
             << "\n";
   const double meanDiff = std::abs(hImpulse->GetMean() - 1);
@@ -85,56 +93,66 @@ void analysis()
             << "> Parameter slope: " << impulseExpFit->GetParameter(1) << "\n";
   std::cout << "> Reduced Chisquare: "
             << impulseExpFit->GetChisquare() / impulseExpFit->GetNDF() << "\n";
-  std::cout << "> Fit probability: " << impulseExpFit->GetProb() << "\n\n";
-  
-  hImpulse->Draw();
+  std::cout << "> Fit probability: " << impulseExpFit->GetProb() << "\n";
+  std::cout << "\n------------------------------------------------------------------------\n";
 
+  TCanvas* canvasKStar = new TCanvas("canvasDecayment", "Fitting histogram from decayment K*",
+                                     1000, 1000, 800, 600);
+  hInvMassKStar->Draw();
 
   TH1F* hSubtraction1 = new TH1F(
-      "hS1", "Invariant Mass: subtraction between opposite and same charge", 3000, 0., 6.);
+      "hS1", "Invariant Mass: subtraction between opposite and same charge", 1200, 0., 6.);
   hSubtraction1->Add(hInvMassOppositeCharge, hInvMassSameCharge, 1., -1.);
 
   TH1F* hSubtraction2 =
-      new TH1F("hS2", "Invariant Mass: subtraction between Pi and K", 3000, 0., 6.);
-  hSubtraction2->Add(hInvMassPiKOppositeCharge, hInvMassPiKSameCharge, 1.,-1.);
+      new TH1F("hS2", "Invariant Mass: subtraction between Pi and K", 1200, 0., 6.);
+  hSubtraction2->Add(hInvMassPiKOppositeCharge, hInvMassPiKSameCharge, 1., -1.);
 
-  // disegno per comparare i picchi
-  TCanvas* canvasKStar =
-      new TCanvas("canvasKStar", "Invariant mass: decayment particles", 800, 600);
-  hInvMassKStar->Draw();
-
-  TCanvas* hS1 = new TCanvas(
-      "hS1", "Invariant Mass: subtraction between opposite and same charge", 800, 600);
+  TCanvas* canvasSub1 = new TCanvas(
+      "canvasSub1", "Fitting histogram subtraction between opposite and same charge", 1000,
+      1000, 800, 600);
 
   TF1* fitGauss1 = new TF1("fitGauss1", "gaus", hSubtraction1->GetXaxis()->GetXmin(),
                            hSubtraction1->GetXaxis()->GetXmax());
   fitGauss1->SetParameter(1, hInvMassKStar->GetMean());
   fitGauss1->SetParameter(2, hInvMassKStar->GetRMS());
   hSubtraction1->Fit(fitGauss1, "R");
-  hSubtraction1->GetXaxis()->SetRangeUser(0.2, 1.2);
+  hSubtraction1->GetXaxis()->SetRangeUser(0.2, 1.5);
   hSubtraction1->Draw();
-  std::cout << "\n-------Fit hSubtraction1------- \n"
+  std::cout << "\n                        Fit hSubtraction1                        \n"
             << "Mean: " << fitGauss1->GetParameter(1) << "\n";
   std::cout << "Sigma: " << fitGauss1->GetParameter(2) << "\n";
   std::cout << "Recudced Chisquare: " << fitGauss1->GetChisquare() / fitGauss1->GetNDF()
             << "\n";
   std::cout << "Fit probability = " << fitGauss1->GetProb() << "\n";
+  std::cout << "\n------------------------------------------------------------------------\n";
 
-  TCanvas* hS2 = new TCanvas("hS2", "Invariant Mass: subtraction between Pi and K", 800, 600);
-
+ TCanvas* canvasSub2 = new TCanvas(
+      "canvasSub2", "Fitting histogram subtraction between Pi and K", 1000,
+      1000, 800, 600);
   TF1* fitGauss2 = new TF1("fitGauss2", "gaus", hSubtraction2->GetXaxis()->GetXmin(),
                            hSubtraction2->GetXaxis()->GetXmax());
   fitGauss2->SetParameter(1, hInvMassKStar->GetMean());
   fitGauss2->SetParameter(2, hInvMassKStar->GetRMS());
   hSubtraction2->Fit(fitGauss2, "R");
-  hSubtraction2->GetXaxis()->SetRangeUser(0.2, 1.2);
+  hSubtraction2->GetXaxis()->SetRangeUser(0.2, 1.5);
   hSubtraction2->Draw();
-  std::cout << "\n-------Fit hSubtraction2------- \n"
+  std::cout << "\n                        Fit hSubtraction2                        \n"
             << "Mean: " << fitGauss2->GetParameter(1) << "\n";
   std::cout << "Sigma: " << fitGauss2->GetParameter(2) << "\n";
   std::cout << "Recudced Chisquare: " << fitGauss2->GetChisquare() / fitGauss2->GetNDF()
             << "\n";
   std::cout << "Fit probability = " << fitGauss2->GetProb() << "\n";
+  std::cout << "\n------------------------------------------------------------------------\n";
+
+  std::array<std::string, 7> particleNames{"Pi+", "Pi-", "K+", "K-", "P+", "P-", "K*"};
+  std::cout << "\n                        Particle Generation Ratios                        "
+            << "\n> Total entries: " << nEntrieshParticle << "\n";
+  for (int i{}; i < 7; ++i) {
+    std::cout << "> " << particleNames[i] << " entries: " << hParticles->GetBinContent(i + 1)
+              << " +/- " << hParticles->GetBinError(i + 1) << " ("
+              << hParticles->GetBinContent(i + 1) * 100. / nEntrieshParticle << "%)\n";
+  }
 
   TFile* file2 = new TFile("particle_checking.root", "RECREATE");
   hInvMassKStar->Write();
@@ -142,7 +160,11 @@ void analysis()
   hSubtraction1->Write();
   file2->Close();
 
-  canvasKStar->Print("gaussian_K*.pdf");
-  hS1->Print("histogram_sub_1.pdf");
-  hS2->Print("histogram_sub_2.pdf");
+  canvasPhi->Print("canvasPhi.pdf","RECREATE");
+  canvasTheta->Print("canvasTheta.pdf","RECREATE");
+  canvasImpulse->Print("canvasImpulse.pdf","RECREATE");
+  canvasKStar->Print("canvasKStar.pdf","RECREATE");
+  canvasSub1->Print("canvasSub1.pdf","RECREATE");
+  canvasSub2->Print("canvasSub2.pdf","RECREATE");
+
 }

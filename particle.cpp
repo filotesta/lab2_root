@@ -58,7 +58,8 @@ void Particle::setIndex(int index)
 void Particle::setIndex(const char* name)
 {
   auto index = Particle::findParticle(name);
-  if (index <= nParticleType_) {
+  if (0 <= index
+      && index <= nParticleType_) { // cambio effettuato mettendo il maggiore/uguale a zero
     index_ = index;
   };
 }
@@ -98,8 +99,8 @@ double Particle::particleEnergy() const
 
 double Particle::particleInvMass(const Particle& p) const
 {
-  return sqrt(std::pow((particleEnergy() + p.particleEnergy()), 2)
-              - std::pow(normImpulse(sumVecImpulse(impulse_, p.getImpulse())), 2));
+  return sqrt(std::pow(particleEnergy() + p.particleEnergy(), 2)
+              - std::pow(normImpulse(sumVecImpulse(p.getImpulse(), impulse_)), 2));
 }
 
 int Particle::getCharge() const

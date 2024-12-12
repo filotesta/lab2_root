@@ -98,7 +98,7 @@ int generate()
   }
 
   for (int i{6}; i < 11; ++i) {
-    histo[i] = new TH1F(TString("h") + i, hTitle[i], 3000, 0., 6.0);
+    histo[i] = new TH1F(TString("h") + i, hTitle[i], 1200, 0., 6.0);
     histo[i]->GetYaxis()->SetTitleOffset(1.);
     histo[i]->GetXaxis()->SetTitleSize(0.05);
     histo[i]->GetXaxis()->CenterTitle(true);
@@ -125,6 +125,10 @@ int generate()
   histo[11]->SetMarkerStyle(7);
   histo[11]->SetLineWidth(1);
 
+  for (int i{7}; i < 11; ++i) {
+    histo[i]->Sumw2();
+  }
+
   for (int j{0}; j < nEvents; ++j) {
     overflow = 100;
     for (int i{0}; i < 100; ++i) {
@@ -134,6 +138,7 @@ int generate()
       histo[1]->Fill(phi);
       histo[2]->Fill(theta);
       histo[3]->Fill(impulse);
+      eventParticles[i].setImpulse(polarToCartesian(impulse, theta, phi));
 
       double x = gRandom->Uniform(0, 1);
       if (0. <= x && x < 0.4)
@@ -150,27 +155,25 @@ int generate()
         eventParticles[i].setIndex("P-");
       else {
         eventParticles[i].setIndex("K*");
-        Particle dau1{};
-        Particle dau2{};
         if (x < 0.995) {
-          dau1.setIndex("Pi+");
-          dau2.setIndex("K-");
+          eventParticles[overflow].setIndex("Pi+");
+          ++overflow;
+          eventParticles[overflow].setIndex("K-");
+          ++overflow;
         } else {
-          dau1.setIndex("Pi-");
-          dau2.setIndex("K+");
-        }
-
-        if (eventParticles[i].Decay2Body(dau1, dau2) == 0) {
-          eventParticles[overflow].setIndex(dau1.getIndex());
+          eventParticles[overflow].setIndex("Pi-");
           ++overflow;
-          eventParticles[overflow].setIndex(dau2.getIndex());
+          eventParticles[overflow].setIndex("K+");
           ++overflow;
-          histo[11]->Fill(dau1.particleInvMass(dau2));
         }
+        eventParticles[i].Decay2Body(eventParticles[overflow - 1],
+                                     eventParticles[overflow - 2]),
+            histo[11]->Fill(
+                eventParticles[overflow - 1].particleInvMass(eventParticles[overflow - 2]));
       }
-      eventParticles[i].setImpulse(polarToCartesian(impulse, theta, phi));
-      histo[4]->Fill(
-          sqrt(std::pow(impulse, 2) + std::pow(eventParticles[i].getImpulse().px_, 2)));
+
+      histo[4]->Fill(sqrt(std::pow(eventParticles[i].getImpulse().py_, 2)
+                          + std::pow(eventParticles[i].getImpulse().px_, 2)));
       histo[0]->Fill(eventParticles[i].getIndex());
       histo[5]->Fill(eventParticles[i].particleEnergy());
     }
@@ -186,10 +189,12 @@ int generate()
     for (int k{0}; k < overflow - 1; ++k) {
       for (int r{k + 1}; r < overflow; ++r) {
         if (eventParticles[k].getIndex() != 6 && eventParticles[r].getIndex() != 6) {
-          if (eventParticles[k].getCharge() * eventParticles[r].getCharge() == 1) { // carica concorde
+          if (eventParticles[k].getCharge() * eventParticles[r].getCharge()
+              == 1) { // carica concorde
             histo[7]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
           } else {
-            assert((eventParticles[k].getCharge() * eventParticles[r].getCharge()) == -1); // carica discorde
+            assert((eventParticles[k].getCharge() * eventParticles[r].getCharge())
+                   == -1); // carica discorde
             histo[8]->Fill(eventParticles[k].particleInvMass(eventParticles[r]));
           }
         }
@@ -211,12 +216,8 @@ int generate()
     }
   }
 
-  for (int i{7}; i < 11; ++i) {
-    histo[i]->Sumw2();
-  }
-
   TCanvas* canvas1 = new TCanvas(
-      "canvas1", "Informazioni particelle: tipo, angoli, impulsi ed energia", 0, 10, 800, 600);
+      "canvas1", "Particle informations: types, angles, impulses ed energies", 0, 10, 800, 600);
   canvas1->Divide(2, 3);
   for (int i{0}; i < 6; ++i) {
     canvas1->cd(i + 1);
@@ -224,7 +225,7 @@ int generate()
     histo[i]->Draw("HISTO,SAME");
   }
 
-  TCanvas* canvas2 = new TCanvas("canvas2", "Informazioni particelle: massa invariante", 1000,
+  TCanvas* canvas2 = new TCanvas("canvas2", "Particle informations: various invariant masses combination", 1000,
                                  1000, 800, 600);
   canvas2->Divide(2, 3);
   for (int i{6}, j{0}; i < 12; ++i, ++j) {
