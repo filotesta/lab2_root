@@ -112,7 +112,7 @@ int generate()
     histo[i]->SetLineWidth(1);
   }
 
-  histo[11] = new TH1F(TString("h11"), hTitle[11], 300, 0., 2.);
+  histo[11] = new TH1F(TString("h11"), hTitle[11], 300, 0., 1.78332);
   histo[11]->GetYaxis()->SetTitleOffset(1.);
   histo[11]->GetXaxis()->SetTitleSize(0.05);
   histo[11]->GetXaxis()->CenterTitle(true);
@@ -216,8 +216,9 @@ int generate()
     }
   }
 
-  TCanvas* canvas1 = new TCanvas(
-      "canvas1", "Particle informations: types, angles, impulses ed energies", 0, 10, 800, 600);
+  TCanvas* canvas1 =
+      new TCanvas("canvas1", "Particle informations: types, angles, impulses ed energies", 0,
+                  10, 800, 600);
   canvas1->Divide(2, 3);
   for (int i{0}; i < 6; ++i) {
     canvas1->cd(i + 1);
@@ -225,8 +226,9 @@ int generate()
     histo[i]->Draw("HISTO,SAME");
   }
 
-  TCanvas* canvas2 = new TCanvas("canvas2", "Particle informations: various invariant masses combination", 1000,
-                                 1000, 800, 600);
+  TCanvas* canvas2 =
+      new TCanvas("canvas2", "Particle informations: various invariant masses combination",
+                  1000, 1000, 800, 600);
   canvas2->Divide(2, 3);
   for (int i{6}, j{0}; i < 12; ++i, ++j) {
     canvas2->cd(j + 1);

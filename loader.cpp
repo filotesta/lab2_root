@@ -7,7 +7,7 @@
 #include "TROOT.h"
 #include "TStyle.h"
 
-void loadMacro(){
+void loader(){
     gROOT->LoadMacro("particle_type.cpp+");
     gROOT->LoadMacro("resonance_type.cpp+");
     gROOT->LoadMacro("particle.cpp+");
