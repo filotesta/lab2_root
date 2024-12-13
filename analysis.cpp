@@ -29,13 +29,6 @@ void analysis()
   const double nEntrieshPhi      = hPhi->GetEntries();
   const double nEntrieshTheta    = hTheta->GetEntries();
 
-  //Generazone delle canvas che verranno utilizzate
-  TCanvas* canvasAngImp = new TCanvas(
-      "canvasAngImp", "Fitting histograms about angles and impulses", 0, 10, 800, 600);
-
-  TCanvas* canvasDecay =
-      new TCanvas("canvasDecay", "Fitting histograms about decayments", 0, 10, 800, 600);
-
   // Fit: angoli phi, theta e impulso
   gStyle->SetOptFit(1111);
   TF1* phiUniformFit = new TF1("phiUniformFit", "[0]", hPhi->GetXaxis()->GetXmin(),
@@ -171,6 +164,9 @@ void analysis()
               << hParticles->GetBinContent(i + 1) * 100. / nEntrieshParticle << "%)\n";
   }
 
+  // Generazone delle canvas che verranno utilizzate
+  TCanvas* canvasAngImp =
+      new TCanvas("canvasAngImp", "Fitting histograms about angles and impulses", 1000, 700);
   canvasAngImp->Divide(1, 3);
   canvasAngImp->cd(1);
   hPhi->Draw();
@@ -178,7 +174,10 @@ void analysis()
   hTheta->Draw();
   canvasAngImp->cd(3);
   hImpulse->Draw();
+  canvasAngImp->Update();
 
+  TCanvas* canvasDecay =
+      new TCanvas("canvasDecay", "Fitting histograms about decayments", 1000, 700);
   canvasDecay->Divide(1, 3);
   canvasDecay->cd(1);
   hInvMassKStar->GetXaxis()->SetTitle("");
@@ -187,6 +186,7 @@ void analysis()
   hSubtraction1->Draw();
   canvasDecay->cd(3);
   hSubtraction2->Draw();
+  canvasDecay->Update();
 
   TFile* file2 = new TFile("particle_checking.root", "RECREATE");
   hInvMassKStar->Write();
